@@ -36,7 +36,7 @@ COPY --from=builder /app/dist ./dist
 ENV NODE_ENV=production \
     PORT=5015
 
-EXPOSE 5050
+EXPOSE 5060
 
 # Comando de inicio
 CMD ["node", "dist/main.js"]

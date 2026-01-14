@@ -57,6 +57,6 @@ chmod 600 ~/.ssh/id_ed25519_beestomer
 # Docker
 docker build -t nova-driving-software-api .
 
-docker run -d --name nova-driving-software-api -p 5060:5060 --env-file .env nova-driving-software-api
+docker run -d --name nova-driving-software-api -p 5020:5020 --env-file .env nova-driving-software-api
 
 docker logs -f nova-driving-software-api

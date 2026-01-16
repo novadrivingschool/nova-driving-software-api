@@ -32,7 +32,7 @@ $ npm run test:cov
 # Migrations
 mkdir -p src/db/migrations
 
-npm run db:migration:generate -- src/db/migrations/create-users
+npm run db:migration:generate -- src/db/migrations/create-tables
 npm run db:migration:run
 
 # Pruebas Unitarias

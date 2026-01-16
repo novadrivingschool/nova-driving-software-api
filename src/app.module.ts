@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { BootstrapModule } from './bootstrap/bootstrap.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -29,12 +30,14 @@ import { BootstrapModule } from './bootstrap/bootstrap.module';
           : false,
         autoLoadEntities: true,
         synchronize: config.get<string>('DB_SYNC') === 'true', // Solo true en desarrollo
+        logging: true
       }),
     }),
 
     UsersModule,
     AuthModule,
-    BootstrapModule
+    BootstrapModule,
+    ProductsModule
   ],
   controllers: [],
   providers: [

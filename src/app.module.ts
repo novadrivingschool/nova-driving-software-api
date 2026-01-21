@@ -7,6 +7,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { BootstrapModule } from './bootstrap/bootstrap.module';
 import { ProductsModule } from './products/products.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -37,7 +38,8 @@ import { ProductsModule } from './products/products.module';
     UsersModule,
     AuthModule,
     BootstrapModule,
-    ProductsModule
+    ProductsModule,
+    PaymentsModule
   ],
   controllers: [],
   providers: [

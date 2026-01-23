@@ -8,6 +8,8 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { BootstrapModule } from './bootstrap/bootstrap.module';
 import { ProductsModule } from './products/products.module';
 import { PaymentsModule } from './payments/payments.module';
+import { LocationsModule } from './locations/locations.module';
+import { LocationTypeModule } from './location-type/location-type.module';
 
 @Module({
   imports: [
@@ -39,7 +41,9 @@ import { PaymentsModule } from './payments/payments.module';
     AuthModule,
     BootstrapModule,
     ProductsModule,
-    PaymentsModule
+    PaymentsModule,
+    LocationsModule,
+    LocationTypeModule
   ],
   controllers: [],
   providers: [

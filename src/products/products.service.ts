@@ -9,7 +9,7 @@ import { Product } from './entities/product.entity';
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
-    private readonly repo: Repository<Product>, 
+    private readonly repo: Repository<Product>,
   ) { }
 
 
@@ -81,6 +81,7 @@ export class ProductsService {
         throw new Error(`[ERROR DELETE PRODUCT] Product with UUID ${uuid} not found`);
       }
 
+      console.log(`Product ${uuid} removed successfully `)
 
       return { deleted: true, message: `Product ${uuid} removed successfully` };
 

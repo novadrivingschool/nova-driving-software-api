@@ -46,9 +46,16 @@ export class LocationsService {
     this.logger.log('Getting all locations...')
     try {
       const results = await this.repo.find()
+
+      const cleanData = results.map(location => {
+        // Sacamos las fechas y tiempos, el resto queda en 'data'
+        const { created_time, created_date, updated_date, updated_time, ...data } = location;
+        return data; // Devolvemos solo lo que el frontend necesita para el formulario
+      });
       const resultLength = results.length
       this.logger.log(`Succesfully retrieved ${resultLength} records`)
-      return results
+
+      return cleanData
     } catch (error) {
       this.logger.log('Error getting records', error.stack)
       throw new InternalServerErrorException('Error getting records')

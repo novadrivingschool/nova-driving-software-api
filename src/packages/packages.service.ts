@@ -1,19 +1,19 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { CreatePackageDto } from './dto/create-package.dto';
+import { UpdatePackageDto } from './dto/update-package.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Product } from './entities/product.entity';
+import { Package } from './entities/package.entity';
 
 @Injectable()
-export class ProductsService {
+export class PackagesService {
   constructor(
-    @InjectRepository(Product)
-    private readonly repo: Repository<Product>,
+    @InjectRepository(Package)
+    private readonly repo: Repository<Package>,
   ) { }
 
 
-  async create(createDto: CreateProductDto) {
+  async create(createDto: CreatePackageDto) {
     try {
 
       const newProduct = this.repo.create(createDto);
@@ -55,7 +55,7 @@ export class ProductsService {
     }
   }
 
-  async update(uuid: string, product: UpdateProductDto) {
+  async update(uuid: string, product: UpdatePackageDto) {
     try {
       console.log(`[UPDATE PRODUCT] Updating product with UUID: ${uuid}`)
       const result = await this.repo.update(uuid, product)

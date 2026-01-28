@@ -6,7 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { BootstrapModule } from './bootstrap/bootstrap.module';
-import { ProductsModule } from './products/products.module';
+import { PackagesModule } from './packages/packages.module';
 import { PaymentsModule } from './payments/payments.module';
 import { LocationsModule } from './locations/locations.module';
 import { LocationTypeModule } from './location-type/location-type.module';
@@ -40,7 +40,7 @@ import { LocationTypeModule } from './location-type/location-type.module';
     UsersModule,
     AuthModule,
     BootstrapModule,
-    ProductsModule,
+    PackagesModule,
     PaymentsModule,
     LocationsModule,
     LocationTypeModule

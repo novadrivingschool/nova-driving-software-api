@@ -1,7 +1,7 @@
 import { Column, Double, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('products')
-export class Product {
+@Entity('packages')
+export class Package {
     @PrimaryGeneratedColumn('uuid')
     uuid: string;
 
@@ -19,6 +19,6 @@ export class Product {
     })
     price: number;
 
-    @Column()
+    @Column({ nullable: true })
     description: string;
 }

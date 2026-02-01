@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, HttpException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -28,6 +28,7 @@ export class LocationsService {
       location.created_time = chicagoTime
       location.updated_date = chicagoDate
       location.updated_time = chicagoTime
+      location.last_updated_by = dto.created_by
 
       const result = await this.repo.save(location)
       this.logger.log('Location created succesfully')
@@ -48,11 +49,12 @@ export class LocationsService {
       const results = await this.repo.find()
 
       const cleanData = results.map(location => {
-        // Sacamos las fechas y tiempos, el resto queda en 'data'
-        const { created_time, created_date, updated_date, updated_time, ...data } = location;
-        return data; // Devolvemos solo lo que el frontend necesita para el formulario
-      });
+        const { created_time, created_date, updated_date, updated_time, last_updated_by, created_by, ...data } = location
+        return data
+      })
+
       const resultLength = results.length
+
       this.logger.log(`Succesfully retrieved ${resultLength} records`)
 
       return cleanData
@@ -83,7 +85,7 @@ export class LocationsService {
     }
 
     try {
-      console.log(`[UPDATE location] Updating location with UUID: ${uuid}`)
+      this.logger.log(`[UPDATE location] Updating location with UUID: ${uuid}`)
 
       const chicagoNow = ChicagoDateHelper.now();
 
@@ -96,20 +98,31 @@ export class LocationsService {
       const result = await this.repo.update(uuid, updateData)
 
       if (result.affected === 0) {
-        console.log(`[UPDATE location] location ${uuid} not found`)
+        this.logger.log(`[UPDATE location] location ${uuid} not found`)
+        throw new NotFoundException(`Location with ${uuid} not found`)
       }
 
       return { sucess: true, message: 'Location updated succesfully' }
     } catch (error) {
+
+      if (error instanceof HttpException) {
+        throw error
+      }
+
       if (error.code === '23505') {
         throw new ConflictException('Location code already exists');
       }
-      console.error(`[ERROR UPDATE location]: ${error.message}`)
+
+      this.logger.error(`[ERROR UPDATE location]: ${error.message}`)
       throw new Error('Error updating location')
     }
   }
 
   async updateStatus(uuid: string, dto: UpdateLocationStatusDto) {
+
+    if (!dto || Object.keys(dto).length === 0) {
+      throw new BadRequestException('No data provided for update');
+    }
 
     try {
       console.log(`[UPDATE STATUS] Updating location with UUID: ${uuid}`)
@@ -124,13 +137,19 @@ export class LocationsService {
       const result = await this.repo.update(uuid, updateData)
 
       if (result.affected === 0) {
-        console.log(`[UPDATE location] location ${uuid} not found`)
+        this.logger.log(`[UPDATE location] location ${uuid} not found`)
+        throw new NotFoundException(`Location with ${uuid} not found`)
       }
 
       return { sucess: true, message: 'Location status updated succesfully' }
 
     } catch (error) {
-      console.error(`[ERROR UPDATE location]: ${error.message}`)
+
+      if (error instanceof HttpException) {
+        throw error
+      }
+
+      this.logger.error(`[ERROR UPDATE location]: ${error.message}`)
       throw new Error('Error updating location')
     }
 

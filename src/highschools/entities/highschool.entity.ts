@@ -1,15 +1,22 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('location_type')
-export class LocationType {
+@Entity('highschools')
+export class Highschool {
+
     @PrimaryGeneratedColumn('uuid')
     uuid: string;
 
     @Column({ unique: true })
-    id: string;
+    highschool_id: string;
 
     @Column()
-    type_name: string;
+    highschool_name: string;
+
+    @Column({ nullable: true })
+    highschool_address: string;
+
+    @Column({ type: 'boolean' })
+    highschool_status: boolean;
 
     @Column()
     created_by: string;
@@ -28,4 +35,5 @@ export class LocationType {
 
     @Column({ type: 'time' })
     updated_time: string;
+
 }

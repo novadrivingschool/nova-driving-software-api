@@ -28,8 +28,8 @@ export class LocationTypeService {
         created_date: chicagoDate,
         created_time: chicagoTime,
         updated_date: chicagoDate,
-        updated_time: chicagoTime
-
+        updated_time: chicagoTime,
+        last_updated_by: dto.created_by
       }
 
       const result = await this.repo.save(data)
@@ -49,9 +49,13 @@ export class LocationTypeService {
     this.logger.log('Getting all location types...')
     try {
       const results = await this.repo.find()
+      const cleanData = results.map(locationType => {
+        const { created_time, created_date, updated_date, updated_time, ...data } = locationType
+        return data
+      })
       const resultLength = results.length
       this.logger.log(`Succesfully retrieved ${resultLength} records`)
-      return results
+      return cleanData
     } catch (error) {
       this.logger.log('Error getting records', error.stack)
       throw new InternalServerErrorException('Error getting records')

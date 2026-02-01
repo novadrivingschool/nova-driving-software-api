@@ -12,4 +12,11 @@ export class UpdateLocationStatusDto {
     })
     @IsEnum(LocationStatus)
     location_status: LocationStatus
+
+    @ApiProperty({
+        description: 'Persona que actualizó el status ubicación',
+        example: 'Mateo Torres'
+    })
+    @IsString()
+    last_updated_by: string;
 }

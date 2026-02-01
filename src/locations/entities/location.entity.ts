@@ -23,16 +23,19 @@ export class Location {
     location_type: string;
 
     @Column()
-    address: string;
+    location_address: string;
 
     @Column()
-    city: string;
+    location_city: string;
 
     @Column()
-    state: string;
+    location_state: string;
 
     @Column()
-    zip_code: string;
+    location_zip_code: string;
+
+    @Column()
+    created_by: string;
 
     @Column({ type: 'date' })
     created_date: string;
@@ -40,6 +43,8 @@ export class Location {
     @Column({ type: 'time' })
     created_time: string;
 
+    @Column()
+    last_updated_by: string;
 
     @Column({ type: 'date' })
     updated_date: string;

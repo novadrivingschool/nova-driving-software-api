@@ -6,7 +6,10 @@ export class Package {
     uuid: string;
 
     @Column()
-    name: string;
+    package_name: string;
+
+    @Column({ unique: true })
+    package_code: string;
 
     @Column({
         type: 'decimal',
@@ -17,8 +20,38 @@ export class Package {
             from: (value: string) => parseFloat(value)
         }
     })
-    price: number;
+    package_price: number;
+
+    @Column()
+    package_status: boolean;
 
     @Column({ nullable: true })
-    description: string;
+    package_description: string;
+
+    @Column({ type: "jsonb" })
+    package_locations: string[];
+
+    @Column({ nullable: true })
+    package_web_name: string;
+
+    @Column({ nullable: true })
+    package_web_description: string;
+
+    @Column()
+    created_by: string;
+
+    @Column({ type: 'date' })
+    created_date: string;
+
+    @Column({ type: 'time' })
+    created_time: string;
+
+    @Column({ type: 'date' })
+    updated_date: string;
+
+    @Column({ type: 'time' })
+    updated_time: string;
+
+    @Column()
+    last_updated_by: string;
 }

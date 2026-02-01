@@ -19,4 +19,12 @@ export class CreateLocationTypeDto {
     @IsString()
     @IsNotEmpty()
     type_name: string;
+
+    @ApiProperty({
+        description: 'Persona que crea el tipo de ubicación',
+        example: 'Mateo Torres',
+        type: String
+    })
+    @IsString()
+    created_by: string;
 }

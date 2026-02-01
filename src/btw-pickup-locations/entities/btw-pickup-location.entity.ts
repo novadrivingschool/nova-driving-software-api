@@ -1,15 +1,19 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('location_type')
-export class LocationType {
+@Entity('btw_pickup_locations')
+export class BtwPickupLocation {
+
     @PrimaryGeneratedColumn('uuid')
     uuid: string;
 
     @Column({ unique: true })
-    id: string;
+    btw_pickup_id: string;
 
     @Column()
-    type_name: string;
+    btw_pickup_name: string;
+
+    @Column({ type: 'boolean' })
+    btw_pickup_status: boolean;
 
     @Column()
     created_by: string;
@@ -28,4 +32,5 @@ export class LocationType {
 
     @Column({ type: 'time' })
     updated_time: string;
+
 }

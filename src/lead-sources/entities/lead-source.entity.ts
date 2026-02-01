@@ -1,15 +1,19 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('location_type')
-export class LocationType {
+@Entity('lead_sources')
+export class LeadSource {
+
     @PrimaryGeneratedColumn('uuid')
     uuid: string;
 
     @Column({ unique: true })
-    id: string;
+    source_id: string;
 
     @Column()
-    type_name: string;
+    source_name: string;
+
+    @Column({ type: 'boolean', default: true })
+    source_status: boolean;
 
     @Column()
     created_by: string;
@@ -28,4 +32,5 @@ export class LocationType {
 
     @Column({ type: 'time' })
     updated_time: string;
+
 }

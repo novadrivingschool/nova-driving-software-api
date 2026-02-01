@@ -1,11 +1,10 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { CreatePackageDto } from './create-package.dto';
+import { CreateStudentDto } from './create-student.dto';
 import { IsString } from 'class-validator';
 
-export class UpdatePackageDto extends PartialType(CreatePackageDto) {
-
+export class UpdateStudentDto extends PartialType(CreateStudentDto) {
     @ApiProperty({
-        description: 'Persona que actualizó el paquete',
+        description: 'Persona que actualizo el estudiante',
         example: 'Mateo Torres'
     })
     @IsString()

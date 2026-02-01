@@ -1,12 +1,17 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, ConflictException, HttpException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { CreatePackageDto } from './dto/create-package.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Package } from './entities/package.entity';
+import { ChicagoDateHelper } from 'src/common/helpers/date-helper';
+import { UpdatePackageStatusDto } from './dto/update-package-status.dto';
 
 @Injectable()
 export class PackagesService {
+
+  private readonly logger = new Logger(PackagesService.name);
+
   constructor(
     @InjectRepository(Package)
     private readonly repo: Repository<Package>,
@@ -16,21 +21,47 @@ export class PackagesService {
   async create(createDto: CreatePackageDto) {
     try {
 
-      const newProduct = this.repo.create(createDto);
-      console.log('Saving in database: ', newProduct)
-      return await this.repo.save(newProduct);
+      const newPackage = this.repo.create(createDto);
+
+      const chicagoNow = ChicagoDateHelper.now()
+      const chicagoDate = chicagoNow.toISODate()
+      const chicagoTime = chicagoNow.toFormat('HH:mm:ss')
+
+      newPackage.created_date = chicagoDate
+      newPackage.created_time = chicagoTime
+      newPackage.updated_date = chicagoDate
+      newPackage.updated_time = chicagoTime
+      newPackage.last_updated_by = createDto.created_by
+
+      console.log('Saving in database: ', newPackage)
+      return await this.repo.save(newPackage);
 
     } catch (error) {
-      throw new InternalServerErrorException('Error saving in database')
+      if (error.code === '23505') {
+        throw new ConflictException('Package code already exists');
+      }
+      this.logger.error('Error creating package', error.stack)
+      throw new InternalServerErrorException('Error creating package')
     }
   }
 
   async findAll() {
     try {
-      console.log('[FIND ALL PRODUCTS] Getting all products...')
-      return await this.repo.find()
+      this.logger.log('[FIND ALL PACKAGES] Getting all packages...')
+      const results = await this.repo.find()
+
+      const cleanData = results.map(item => {
+        const { created_time, created_date, updated_date, updated_time, last_updated_by, created_by, ...data } = item
+        return data
+      })
+
+      const resultLength = results.length
+
+      this.logger.log(`Succesfully retrieved ${resultLength} records`)
+
+      return cleanData
     } catch (error) {
-      console.error('Error fetching products:', error);
+      this.logger.error('Error fetching products:', error);
 
       throw new Error('Could not retrieve products');
     }
@@ -39,55 +70,115 @@ export class PackagesService {
 
   async findOne(uuid: string) {
     try {
-      console.log(`[FIND ONE PRODUCT] Looking for product with UUID: ${uuid}`);
+      this.logger.log(`[FIND ONE PACKAGE] Looking for product with UUID: ${uuid}`);
 
       const product = await this.repo.findOneBy({ uuid });
 
       if (!product) {
-        throw new Error(`Product with UUID ${uuid} not found`);
+        throw new NotFoundException(`Package with UUID ${uuid} not found`);
       }
 
       return product
 
     } catch (error) {
-      console.error(`[Error findOne]: ${error.message}`);
-      throw new Error('Error getting product')
+
+      if (error instanceof HttpException) {
+        throw error
+      }
+
+      this.logger.error(`[Error findOne]: ${error.message}`);
+      throw new Error('Error getting package')
     }
   }
 
-  async update(uuid: string, product: UpdatePackageDto) {
-    try {
-      console.log(`[UPDATE PRODUCT] Updating product with UUID: ${uuid}`)
-      const result = await this.repo.update(uuid, product)
+  async update(uuid: string, dto: UpdatePackageDto) {
 
-      if (result.affected === 0) {
-        console.log(`[UPDATE PRODUCT] Product ${uuid} not found`)
+    if (!dto || Object.keys(dto).length === 0) {
+      throw new BadRequestException('No data provided for update');
+    }
+
+    try {
+      console.log(`[UPDATE PACKAGE] Updating package with UUID: ${uuid}`)
+      const chicagoNow = ChicagoDateHelper.now();
+
+      const updateData = {
+        ...dto,
+        updated_date: chicagoNow.toISODate(),
+        updated_time: chicagoNow.toFormat('HH:mm:ss')
       }
 
-      return { sucess: true, message: 'Product udated succesfully' }
+      const result = await this.repo.update(uuid, updateData)
+
+      if (result.affected === 0) {
+        throw new NotFoundException(`Package with UUID ${uuid} not found`);
+      }
+
+
+      return { sucess: true, message: 'Package updated succesfully' }
     } catch (error) {
-      console.error(`[ERROR UPDATE PRODUCT]: ${error.message}`)
-      throw new Error('Error updating product')
+
+      if (error instanceof HttpException) {
+        throw error
+      }
+
+      if (error.code === '23505') {
+        throw new ConflictException('Package code already exists');
+      }
+
+      this.logger.error('Error creating package', error.stack)
+      throw new InternalServerErrorException('Error creating package')
     }
 
   }
 
-  async remove(uuid: string) {
-    try {
-      console.log(`[DELETE PRODUCT] Deleting product with UUID: ${uuid} `)
-      const result = await this.repo.delete(uuid)
+  // async remove(uuid: string) {
 
-      if (result.affected === 0) {
-        throw new Error(`[ERROR DELETE PRODUCT] Product with UUID ${uuid} not found`);
+  //   await this.findOne(uuid)
+
+
+  //   try {
+  //     console.log(`[DELETE PRODUCT] Deleting product with UUID: ${uuid} `)
+  //     await this.repo.delete(uuid)
+
+  //     console.log(`Product ${uuid} removed successfully `)
+
+  //     return { deleted: true, message: `Product ${uuid} removed successfully` };
+
+  //   } catch (error) {
+  //     console.error(`[ERROR DELETE PRODUCT]: ${error.message}`)
+  //     throw new Error('Error deleting product')
+  //   }
+  // }
+
+  async updateStatus(uuid: string, dto: UpdatePackageStatusDto) {
+
+    try {
+      console.log(`[UPDATE PACKAGE STATUS] Updating package with UUID: ${uuid}`)
+      const chicagoNow = ChicagoDateHelper.now();
+
+      const updateData = {
+        ...dto,
+        updated_date: chicagoNow.toISODate(),
+        updated_time: chicagoNow.toFormat('HH:mm:ss')
       }
 
-      console.log(`Product ${uuid} removed successfully `)
+      const result = await this.repo.update(uuid, updateData);
 
-      return { deleted: true, message: `Product ${uuid} removed successfully` };
+      if (result.affected === 0) {
+        throw new NotFoundException(`Package with UUID ${uuid} not found`);
+      }
+
+      return { sucess: true, message: 'Package status updated succesfully' }
 
     } catch (error) {
-      console.error(`[ERROR DELETE PRODUCT]: ${error.message}`)
-      throw new Error('Error deleting product')
+
+      if (error instanceof HttpException) {
+        throw error
+      }
+
+      this.logger.error(`${error.message}`)
+      throw new Error('Error updating location')
     }
+
   }
 }

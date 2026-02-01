@@ -10,6 +10,10 @@ import { PackagesModule } from './packages/packages.module';
 import { PaymentsModule } from './payments/payments.module';
 import { LocationsModule } from './locations/locations.module';
 import { LocationTypeModule } from './location-type/location-type.module';
+import { StudentsModule } from './students/students.module';
+import { HighschoolsModule } from './highschools/highschools.module';
+import { LeadSourcesModule } from './lead-sources/lead-sources.module';
+import { BtwPickupLocationsModule } from './btw-pickup-locations/btw-pickup-locations.module';
 
 @Module({
   imports: [
@@ -43,7 +47,11 @@ import { LocationTypeModule } from './location-type/location-type.module';
     PackagesModule,
     PaymentsModule,
     LocationsModule,
-    LocationTypeModule
+    LocationTypeModule,
+    StudentsModule,
+    HighschoolsModule,
+    LeadSourcesModule,
+    BtwPickupLocationsModule
   ],
   controllers: [],
   providers: [

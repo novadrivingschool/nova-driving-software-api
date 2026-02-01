@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsString } from "class-validator";
+import { IsEnum, IsNumber, IsString } from "class-validator";
 
 
 export enum LocationStatus {
@@ -44,26 +44,33 @@ export class CreateLocationDto {
         example: '742 Evergreen Terrace'
     })
     @IsString()
-    address: string;
+    location_address: string;
 
     @ApiProperty({
         description: 'Ciudad donde se encuentra la ubicación',
         example: 'Springfield'
     })
     @IsString()
-    city: string;
+    location_city: string;
 
     @ApiProperty({
         description: 'Estado o provincia',
         example: 'Illinois'
     })
     @IsString()
-    state: string;
+    location_state: string;
 
     @ApiProperty({
         description: 'Código postal',
         example: '62704'
     })
     @IsString()
-    zip_code: string;
+    location_zip_code: string;
+
+    @ApiProperty({
+        description: 'Persona que creo la ubicación',
+        example: 'Mateo Torres'
+    })
+    @IsString()
+    created_by: string;
 }

@@ -1,11 +1,10 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { CreatePackageDto } from './create-package.dto';
+import { CreateLeadSourceDto } from './create-lead-source.dto';
 import { IsString } from 'class-validator';
 
-export class UpdatePackageDto extends PartialType(CreatePackageDto) {
-
+export class UpdateLeadSourceDto extends PartialType(CreateLeadSourceDto) {
     @ApiProperty({
-        description: 'Persona que actualizó el paquete',
+        description: 'Persona que actualizó el estado de la fuente',
         example: 'Mateo Torres'
     })
     @IsString()
